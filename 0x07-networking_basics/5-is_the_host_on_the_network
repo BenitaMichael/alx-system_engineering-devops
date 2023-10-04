@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Bash script that pings an IP address passed as an argument
+if [ $# -ne 1 ]
