@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
-# configures a new HAproxy as a load balancer
 
-# Installs HAproxy on a server
 sudo apt-get -y update
-sudo apt-get -y install haproxy=1.8.\*
+apt-get -y install haproxy
 
-# Configures haproxy configuration file
-echo '
-        bind 0:80
-        default_backend web_servers
+# edit config file
+server_config=\
+"
+frontend  yonas-frontend
+        bind *:80
+        mode http
+        default_backend yonas-backend
+backend yonas-backend
         balance roundrobin
-        server 260808-web-01 54.157.191.113:80
-        server 260808-web-02 18.206.197.140:80
-' >> /etc/haproxy/haproxy.cfg
+        server 63210-web-01 100.25.19.204:80 check
+        server 63210-web-02 54.157.159.85:80 check
+"
+echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
 
-# Test syntax errors
-sudo nginx -t
+# enable haproxy to be started by init script
 
-# Restarts HAproxy service
+echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
+
 sudo service haproxy restart
