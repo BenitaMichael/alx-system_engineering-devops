@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# configures a new HAproxy as a load balancer
+
+# Installs HAproxy on a server
+sudo apt-get -y update
+sudo apt-get -y install haproxy=1.8.\*
+
+# Configures haproxy configuration file
+echo '
+        bind 0:80
+        default_backend web_servers
+        balance roundrobin
+        server 260808-web-01 54.157.191.113:80
+        server 260808-web-02 18.206.197.140:80
+' >> /etc/haproxy/haproxy.cfg
+
+# Test syntax errors
+sudo nginx -t
+
+# Restarts HAproxy service
+sudo service haproxy restart
