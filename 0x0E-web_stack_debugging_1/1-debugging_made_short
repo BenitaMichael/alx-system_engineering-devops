@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Debugging Nginx server (service (init) must say that nginx is not running)
-ln -s -f /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-service nginx start
-kill "$(pgrep 'nginx' | head -1)"
+# Fixes the nginx listening port and reloads the nginx master process
+echo -e "sed -iE 's/listen 8080/listen 80/g' /etc/nginx/sites-enabled/default\
+sed -i 's/listen \[::\]:8080/listen \[::\]:80/g' /etc/nginx/sites-enabled/default\n
+pgrep nginx -o > /run/nginx.pid\nnginx -s reload\necho''> /run/nginx.pid" | bash
+
